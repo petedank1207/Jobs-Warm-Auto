@@ -126,6 +126,44 @@ Return:
 3) Notes (profile completeness, verification status)
 
 
-Step 3: Ask User to Restart Claude Code
+Step 3: Set up Hunter.io API
 
-You should ask the user to restart Claude Code to have the config changes take effect.
+Hunter.io is used for email enrichment (finding hiring manager emails by name + company domain).
+
+1. Sign up at https://hunter.io and get your API key
+2. Add to `.gitignore/.env`:
+   ```
+   HUNTER_API_KEY=your_key_here
+   ```
+3. No MCP server needed — the pipeline calls Hunter.io via `curl`
+
+Step 4: Set up Gmail MCP Server
+
+Gmail MCP enables saving drafted outreach emails directly to your Gmail drafts folder.
+
+1. Create a Google Cloud project and enable the Gmail API
+2. Create OAuth Desktop credentials (download the JSON)
+3. Run the auth flow:
+   ```bash
+   npx @shinzolabs/gmail-mcp auth
+   ```
+4. Add the MCP server:
+   ```bash
+   claude mcp add gmail -- npx @shinzolabs/gmail-mcp
+   ```
+
+Step 5: Ask User to Restart Claude Code
+
+You should ask the user to restart Claude Code to have the config changes take effect after any MCP changes.
+
+---
+
+## Running the Job Prospector
+
+Use the `/job-prospector` skill to run the full pipeline. It will:
+1. Search for open jobs matching your criteria (via Exa)
+2. Identify hiring managers at each company (via Exa people search)
+3. Find their email addresses (via Hunter.io)
+4. Draft personalized outreach emails (saved to Gmail drafts)
+
+Edit the outreach template at `hiring-manager-search/assets/email_template.md` to customize your messaging.

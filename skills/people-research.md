@@ -1,5 +1,5 @@
 ---
-name: hiring-manager-search
+name: people-research
 description: Finds hiring managers for job postings using Exa people search. Takes a JSON array of job postings and returns the same array enriched with hiring manager name, title, LinkedIn URL, and email where findable. Use this skill whenever the user provides job postings and wants to find who to contact, who is hiring, or who the recruiter or hiring manager is.
 ---
 
@@ -103,9 +103,17 @@ The agent returns a compact JSON object:
 
 If no credible match is found, return empty strings for all four fields.
 
-### Step 4: Merge and output
+### Step 4: Save to CSV
 
-After all agents finish, merge their results back into the original job posting objects. Output the complete enriched JSON array.
+After all agents finish, write results to `data/contacts.csv` with these columns:
+```
+job_id,company_name,job_title,job_url,contact_name,contact_title,department,contact_location,local_match,linkedin_url,rank_reason
+```
+Include the header row. Quote any field containing commas. This ensures all people data (including LinkedIn URLs) is persisted to disk even if the session is interrupted.
+
+### Step 5: Merge and output
+
+Merge agent results back into the original job posting objects. Output the complete enriched JSON array.
 
 ## Parallelism
 
