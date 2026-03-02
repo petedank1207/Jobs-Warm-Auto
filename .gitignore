@@ -1,0 +1,15 @@
+# Environment variables / secrets
+.env
+.env.*
+*.env
+
+# macOS
+.DS_Store
+
+# Data files (may contain PII)
+data/*.csv
+data/*.json
+data/*.xlsx
+
+# Node
+node_modules/
