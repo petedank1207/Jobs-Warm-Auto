@@ -1,0 +1,11 @@
+job_id,contact_name,contact_title,company,email,email_confidence,draft_created
+1,Kristen Swanson,Medical Records Manager,LECOM Health,kswanson@lecom.edu,91,Yes
+1,Kimberly Conroy,HR Director,LECOM Health,kconroy@lecom.edu,93,Yes
+2,Jaime Sanz,HR Generalist 3,CT OCME,,0,No
+3,Tye Kuyper,HR Manager,Monument Health,tkuyper@monument.health,99,Yes
+3,Eric Brouillette,HR Business Partner,Monument Health,ebrouillette@monument.health,98,Yes
+4,Kathleen Syrek,Epic App Team Lead - HIM,Main Line Health,syrekk@mlhs.org,86,Yes
+4,Joanne Hill,HR Director,Main Line Health,hillj@mlhs.org,88,Yes
+5,Jamie Corzine,"Mgr, Epic Ambulatory Apps",Memorial Health,,0,No
+5,Lindsay Atkinson,"Mgr, Epic Inpatient Apps",Memorial Health,,0,No
+5,Justin Cox,Sr Talent Acquisition Partner,Memorial Health,,0,No

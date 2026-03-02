@@ -1,22 +1,6 @@
-job_id,company_name,job_title,location,job_url,company_domain,date_found
-1,Penn Medicine,Medical Records Clerk,"Philadelphia, PA",https://www.linkedin.com/jobs/view/medical-records-clerk-pah-farm-journal-building-at-penn-medicine-university-of-pennsylvania-health-system-4324511890,pennmedicine.org,2026-02-24
-2,Baptist Health,HIM Health Record Associate,"Boynton Beach, FL",https://www.linkedin.com/jobs/view/him-health-record-associate-health-information-management-bethesda-east-ft-8a-4-30p-at-baptist-health-4300156135,baptisthealth.net,2026-02-24
-3,SSM Health,Health Information Documentation Rep,Missouri,https://www.linkedin.com/jobs/view/health-information-documentation-rep-prn-at-ssm-health-4302605696,ssmhealth.com,2026-02-24
-4,Cabell Huntington Hospital,File Clerk,"Huntington, WV",https://www.career.com/job/cabell-huntington-hospital-st-mary/file-clerk/j202203241620218844265,cabellhuntington.org,2026-02-24
-5,CarolinaEast Health System,HIS/Medical Records Clerk,"Pollocksville, NC",https://jobs.carolinaeasthealth.com/job/pollocksville/his-medical-records-clerk-cim-pollocksville/242/80365562288,carolinaeasthealth.com,2026-02-24
-6,UC Health,Medical Records Technician,"Cincinnati, OH",https://careers.uchealth.com/search/jobdetails/medical-records-technician-medical-records-services-full-time-1st-shift/bf6b3d76-4108-40d8-85be-3804ef1a9d08,uchealth.com,2026-02-24
-7,University of Missouri Health Care,Health Records Technician II,"Jefferson City, MO",https://careers.muhealth.org/us/en/job/25004462/Health-Records-Technician-II-Capital-Region-Medical-Center-PRN,muhealth.org,2026-02-24
-8,Main Line Health,HIM Record Integrity Specialist,"Philadelphia, PA",https://careerservices.ccp.edu/jobs/main-line-health-him-record-integrity-specialist/,mainlinehealth.org,2026-02-24
-9,Jefferson Health,Sr EHR Clinical Application Analyst,,https://www.linkedin.com/jobs/view/sr-ehr-clinical-application-analyst-at-jefferson-health-4367891830,jeffersonhealth.org,2026-02-24
-10,Beth Israel Lahey Health,EHR Applications Analyst 3,"Charlestown, MA",https://jobs.bilh.org/job/charlestown/ehr-applications-analyst-3-ambulatory/169/79870301104,bilh.org,2026-02-24
-11,Beth Israel Lahey Health,Epic EHR Applications Analyst 2 - Resolute Professional Billing,"Charlestown, MA",https://jobs.bilh.org/jobs/epic-ehr-applications-analyst-2-resolute-professional-billing-charlestown-ma-jr85109/,bilh.org,2026-02-24
-12,Beth Israel Lahey Health,EHR Applications Analyst 3 (Hospital Billing),"Charlestown, MA",https://jobs.bilh.org/job/charlestown/ehr-applications-analyst-3-patient-billing/169/79870300992,bilh.org,2026-02-24
-13,University of Kentucky,EHR Analyst Principal,"Lexington, KY",https://careers.insidehighered.com/job/3459892/ehr-analyst-principal-ukhc/,uky.edu,2026-02-24
-14,Memorial Health,Epic Security Analyst II,"Springfield, IL",https://jobs.memorial.health/job/2025-31412/,memorial.health,2026-02-24
-15,Boston Medical Center,Applications Analyst - EHR,"Boston, MA",https://builtin.com/job/applications-analyst-ehr-40-hr-days/7302869,bmc.org,2026-02-24
-16,Beth Israel Lahey Health,EHR Application Analyst 4,"Charlestown, MA",https://jobs.bilh.org/job/charlestown/ehr-application-analyst-4-clindoc/169/83608645232,bilh.org,2026-02-24
-17,UPMC,Systems Analyst - Senior (Epic),"Pittsburgh, PA",https://careers.upmc.com/job/22548204/systems-analyst-senior-epic-pittsburgh-pa/,upmc.com,2026-02-24
-18,Memorial Health,Epic Beaker Analyst,"Springfield, IL",https://jobs.memorial.health/job/2025-31500/,memorial.health,2026-02-24
-19,Beth Israel Lahey Health,Epic Application Analyst 2 (Security & Provider Management),"Remote / Boston, MA",https://www.linkedin.com/jobs/view/epic-application-analyst-2-security-provider-management-remote-at-beth-israel-lahey-health-4258231847,bilh.org,2026-02-24
-20,Beth Israel Lahey Health,EHR Applications Analyst - Cupid/Lumens (Remote),"Remote / Charlestown, MA",https://jobs.bilh.org/jobs/ehr-applications-analyst-cupid-lumens-remote-charlestown-ma-jr87843/,bilh.org,2026-02-24
-21,University of Kentucky Healthcare,Medical Records Chart Coordinator,"Lexington, KY",https://ukjobs.uky.edu/postings/597984,uky.edu,2026-02-24
+job_id,company_name,job_title,location,job_url,company_domain
+1,LECOM Health,Medical Records / Ward Clerk,"Erie County, PA",https://lecomhealth.com/jobs/medical-records-ward-clerk/,lecomhealth.com
+2,State of Connecticut - OCME,Medical Records Clerk,"Farmington, CT",https://www.jobapscloud.com/CT/sup/BulPreview.asp?R1=250429&R2=6842CL&R3=001,ct.gov
+3,Monument Health,HIM Technician II,"Rapid City, SD",https://monument.health/jobs/health-information-management-technician-ii/,monument.health
+4,Main Line Health,HIM Record Integrity Specialist,"Newtown Square, PA",https://careerservices.ccp.edu/jobs/main-line-health-him-record-integrity-specialist/,mainlinehealth.org
+5,Memorial Health,Epic Analyst III (Healthy Planet),"Springfield, IL",https://jobs.memorial.health/job/2025-31405/,memorial.health

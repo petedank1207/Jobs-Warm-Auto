@@ -1,31 +1,31 @@
 # Outreach Email Template
 
 ## Subject
-Helping {{company_name}} with {{job_title}} — Quick Question
+Streamlining medical records at {{company_name}}
 
 ## Body
 
 Hi {{hiring_manager_name}},
 
-I noticed {{company_name}} is hiring for a {{job_title}} and wanted to reach out. Finding the right people for roles like this can be a real challenge, especially when you need someone who can hit the ground running.
+I saw {{company_name}} is hiring for a {{job_title}} and wanted to reach out. Roles like this often signal growing volume around medical record requests, especially from attorneys, and the backlog that comes with manual ROI processes.
 
-I help organizations streamline their hiring for exactly these kinds of positions. Whether it's sourcing qualified candidates faster or reducing time-to-fill, I'd love to learn more about what you're looking for and see if I can help.
+Tavrn works with HIM teams to streamline attorney-provider record retrieval. We're already trusted by PI attorneys nationwide, and our platform standardizes the request process so your team spends less time chasing down records and more time on compliance and operations.
 
-Would you be open to a brief call this week?
+Would a 15-minute call make sense to explore whether this could help {{company_name}}?
 
 Best,
-[Your Name]
-[Your Title]
-[Your Contact Info]
+Peter Dankert
+Chief of Staff, Tavrn
+peter.dankert@tavrn.ai
 
 ---
 
 ## Merge Fields
 
-- `{{hiring_manager_name}}` — First name of the hiring manager
-- `{{hiring_manager_title}}` — Their job title
-- `{{company_name}}` — Company name
-- `{{job_title}}` — The open position title
+- `{{hiring_manager_name}}` - First name of the hiring manager
+- `{{hiring_manager_title}}` - Their job title
+- `{{company_name}}` - Company name
+- `{{job_title}}` - The open position title
 
 ## Customization
 

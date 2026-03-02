@@ -300,17 +300,26 @@ Spawn all email agents in parallel. Rate limit: batch in groups of 10 if more th
 
 **Save to CSV**: After all email agents return, immediately write `data/enriched_contacts.csv` with all contacts including email and confidence data. Also add a `draft_status` column (initially empty, filled in Stage 4).
 
-### Stage 4: Email Drafting via Gmail
+### Stage 4: Email + LinkedIn Drafting
 
 For **each contact** with a valid email (confidence >= 50), spawn a Task agent to:
 
+#### Email Draft
 1. Read the email template from `hiring-manager-search/assets/email_template.md`
 2. Fill in merge fields with prospect data
 3. Personalize the email body — reference the specific job title, company, and any relevant details from that contact's profile
-4. Call Gmail MCP `create_draft` with:
+4. **IMPORTANT — Subject line encoding**: Only use ASCII characters in the subject. No em-dashes, curly quotes, or Unicode. Use plain hyphens (-) and straight quotes (") only.
+5. Call Gmail MCP `create_draft` with:
    - `to`: the contact's email
-   - `subject`: filled template subject
+   - `subject`: filled template subject (ASCII only)
    - `body`: personalized email body (plain text)
+
+#### LinkedIn Messages
+6. Read the LinkedIn templates from `hiring-manager-search/assets/linkedin_message.md`
+7. Fill in merge fields and personalize both:
+   - **Connection request** (max 300 characters)
+   - **Follow-up message** (max 100 words)
+8. Include the LinkedIn messages in the agent's return output (these are NOT auto-sent — they go in the summary and CSV for manual use)
 
 Each job may produce **multiple drafts** (one per qualified contact with a valid email).
 
@@ -323,7 +332,7 @@ After Stage 4 completes (or after Stage 3 if email drafting is skipped), export 
 #### Steps:
 
 1. **Open Google Sheets**: Use `tabs_context_mcp` to check current tabs, then `tabs_create_mcp` to open `https://sheets.google.com`.
-2. **Create a new spreadsheet**: Click "+ Blank" to create a new sheet. Name it "Job Prospector — [today's date]".
+2. **Create a new spreadsheet**: Click "+ Blank" to create a new sheet. Name it "Job Prospector - [today's date]".
 3. **Create "Jobs" sheet**: Populate the first sheet with the contents of `data/jobs.csv`:
    - Row 1: Headers — Job ID, Company, Job Title, Location, Job URL, Company Domain, Date Found
    - Rows 2+: One row per job
