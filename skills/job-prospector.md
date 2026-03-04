@@ -300,6 +300,39 @@ Spawn all email agents in parallel. Rate limit: batch in groups of 10 if more th
 
 **Save to CSV**: After all email agents return, immediately write `data/enriched_contacts.csv` with all contacts including email and confidence data. Also add a `draft_status` column (initially empty, filled in Stage 4).
 
+### Stage 3.5: Email Validation
+
+After Hunter.io returns emails in Stage 3, **verify every email** before drafting outreach. This catches bad addresses before they waste a send.
+
+Use Hunter.io's own verify endpoint (same API key, costs 0.5 credits per check):
+
+```bash
+source .gitignore/.env
+curl -s "https://api.hunter.io/v2/email-verifier?email=${EMAIL}&api_key=$HUNTER_API_KEY"
+```
+
+**Response fields that matter:**
+- `data.status`: `valid` | `invalid` | `accept_all` | `webmail` | `disposable` | `unknown`
+- `data.score`: 0-100 confidence
+
+**Action based on status:**
+| Status | Action |
+|--------|--------|
+| `valid` | ✅ Proceed to Stage 4 (draft email) |
+| `accept_all` | ⚠️ Proceed but flag as "unverified" in CSV — accept-all domains don't reject bad addresses |
+| `webmail` | ✅ Proceed (gmail, outlook, etc.) |
+| `invalid` | ❌ Remove from draft queue, mark `email_verified: false` in CSV |
+| `disposable` | ❌ Remove from draft queue |
+| `unknown` | ⚠️ Proceed but flag as "unverified" |
+
+**Update enriched_contacts.csv**: Add two columns after email enrichment:
+- `email_verified`: `true`, `false`, or `unverified`
+- `verification_status`: raw status string from Hunter.io (`valid`, `invalid`, `accept_all`, etc.)
+
+Only contacts with `email_verified: true` or `email_verified: unverified` proceed to Stage 4. Contacts with `email_verified: false` are skipped for drafting but kept in the CSV for reference.
+
+Run all verification calls in parallel (batch in groups of 10 if needed).
+
 ### Stage 4: Email + LinkedIn Drafting
 
 For **each contact** with a valid email (confidence >= 50), spawn a Task agent to:

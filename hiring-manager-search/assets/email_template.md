@@ -1,17 +1,19 @@
 # Outreach Email Template
 
 ## Subject
-Streamlining medical records at {{company_name}}
+Adding ROI capacity at {{company_name}} - no overhead
 
 ## Body
 
 Hi {{hiring_manager_name}},
 
-I saw {{company_name}} is hiring for a {{job_title}} and wanted to reach out. Roles like this often signal growing volume around medical record requests, especially from attorneys, and the backlog that comes with manual ROI processes.
+I noticed {{company_name}} is hiring for a {{job_title}} - roles like this usually signal a growing HIM team looking to keep up with volume and turnaround demands.
 
-Tavrn works with HIM teams to streamline attorney-provider record retrieval. We're already trusted by PI attorneys nationwide, and our platform standardizes the request process so your team spends less time chasing down records and more time on compliance and operations.
+Tavrn already requests medical records from facilities like yours on behalf of law firms. For the providers we work with most, we now provide staff augmentation for HIM teams looking to add ROI capacity without the overhead.
 
-Would a 15-minute call make sense to explore whether this could help {{company_name}}?
+In practice, we hire a dedicated person to learn your process end-to-end - intake, validation, record compilation, QA, delivery, and audit logging. They work within your governance and follow your rules. It's a lighter lift than a new hire and there's no cost to the facility.
+
+Would a 15-minute call make sense to see if this could help {{company_name}} add capacity while you're scaling?
 
 Best,
 Peter Dankert

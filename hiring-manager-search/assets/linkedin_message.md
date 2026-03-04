@@ -2,15 +2,13 @@
 
 ## Connection Request (max 300 characters)
 
-Hi {{hiring_manager_name}}, I saw {{company_name}} is hiring for a {{job_title}}. I work with HIM teams to streamline attorney medical record requests. Would love to connect and share what we're building at Tavrn.
+Hi {{hiring_manager_name}}, I saw {{company_name}} is hiring for a {{job_title}}. Tavrn provides staff augmentation for HIM teams - we hire someone to learn your ROI process and add capacity at no cost. Would love to connect.
 
 ## Follow-Up Message (max 100 words)
 
-Thanks for connecting, {{hiring_manager_name}}. I noticed the {{job_title}} opening at {{company_name}} - roles like that often come with growing attorney record request volume and manual ROI headaches.
+Thanks for connecting, {{hiring_manager_name}}. Tavrn already requests records from facilities like {{company_name}} on behalf of law firms. For the providers we work with most, we now provide staff augmentation for HIM teams looking to add ROI capacity without the overhead.
 
-Tavrn helps HIM teams standardize and speed up the attorney-provider record retrieval process. We're already working with PI firms nationwide and are now partnering directly with provider HIM departments.
-
-Happy to share how other HIM teams have streamlined this - worth a quick chat?
+We hire a dedicated person to learn your process end-to-end and work within your governance. It's a lighter lift than a new hire and there's no cost to the facility. Would a quick call make sense to see if this could help?
 
 Best,
 Peter
