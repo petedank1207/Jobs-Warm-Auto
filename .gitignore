@@ -10,6 +10,12 @@
 data/*.csv
 data/*.json
 data/*.xlsx
+data/*.md
+data/logs/
 
 # Node
 node_modules/
+
+# Temp files
+*.tmp
+*.bak

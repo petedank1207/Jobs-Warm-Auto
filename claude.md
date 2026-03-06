@@ -1,169 +1,177 @@
-Step 1: Install or update Exa MCP
+# Tavrn GTM Agent
 
-If Exa MCP already exists in your MCP configuration, either uninstall it first and install the new one, or update your existing MCP config with this endpoint. Run this command in your terminal:
+Autonomous outbound sales prospecting agent for Tavrn's healthcare provider staffing service. Finds open hospital HIM/IT jobs, identifies hiring managers, enriches email addresses, and drafts personalized outreach.
 
-claude mcp add --transport http exa "https://mcp.exa.ai/mcp?tools=web_search_advanced_exa"
+## Company Context
 
+- **Company**: Tavrn — legal technology for personal injury law firms (document generation, medical record retrieval)
+- **New Service**: Staff augmentation for hospital Health Information Management (HIM) teams
+- **Value Prop**: We hire a dedicated person to learn your ROI process end-to-end — intake, validation, record compilation, QA, delivery, audit logging. No cost to the facility.
+- **User**: Peter Dankert, Chief of Staff (peter.dankert@tavrn.ai)
+- **North Star**: AI-enabled tooling that accelerates record retrieval for HIM teams. Staffing is the entry point.
 
-Step 2: Add this Claude skill
+## Pipeline Overview
 
----
-name: people-research
-description: People research using Exa search. Finds LinkedIn profiles, professional backgrounds, experts, team members, and public bios across the web. Use when searching for people, finding experts, or looking up professional profiles.
-context: fork
----
+The prospecting pipeline has 4 stages, each independently invocable:
 
-# People Research
+| Stage | Command | Tool | Input | Output |
+|-------|---------|------|-------|--------|
+| 1. Job Discovery | `/scrape-jobs` | Apify (`bebity/linkedin-jobs-scraper`, `epctex/google-jobs-scraper`) | Role keywords, location | `data/jobs.csv` |
+| 2. Contact Search | `/find-contacts` | Exa (people search + company search) | `data/jobs.csv` | `data/contacts.csv` |
+| 3. Email Enrichment | `/enrich-emails` | Hunter.io (email-finder + email-verifier) | `data/contacts.csv` | `data/enriched_contacts.csv` |
+| 4. Outreach Drafts | `/draft-outreach` | Gmail MCP + cold-email skill | `data/enriched_contacts.csv` | Gmail drafts |
 
-## Tool Restriction (Critical)
+Run all 4 stages in sequence with `/prospect`.
 
-ONLY use `web_search_advanced_exa`. Do NOT use `web_search_exa` or any other Exa tools.
+### Data Flow
 
-## Token Isolation (Critical)
+Google Sheets is the master storage for v1. CSV files in `data/` are intermediate persistence — every stage writes its CSV before proceeding to the next stage. If Google Sheets export fails, CSVs are the fallback.
 
-Never run Exa searches in main context. Always spawn Task agents:
-- Agent runs Exa search internally
-- Agent processes results using LLM intelligence
-- Agent returns only distilled output (compact JSON or brief markdown)
-- Main context stays clean regardless of search volume
+## Integrations & API Keys
 
-## Dynamic Tuning
+All keys are stored in `.env` at project root. Source with `source .env`.
 
-No hardcoded numResults. Tune to user intent:
-- User says "a few" → 10-20
-- User says "comprehensive" → 50-100
-- User specifies number → match it
-- Ambiguous? Ask: "How many profiles would you like?"
+| Integration | Env Var | Purpose | Free Tier Limits |
+|-------------|---------|---------|-----------------|
+| Apify | `APIFY_TOKEN` | Job scraping (LinkedIn + Google Jobs) | $5/month free compute |
+| Exa | `EXA_API_KEY` | People search, company research | 1000 searches/month |
+| Hunter.io | `HUNTER_API_KEY` | Email find + verification | 25 searches + 100 verifications/month |
+| Gmail | OAuth at `~/.gmail-mcp/` | Draft creation | Unlimited |
+| Slack | MCP server | Agent communication | Unlimited |
 
-## Query Variation
+### MCP Servers
 
-Exa returns different results for different phrasings. For coverage:
-- Generate 2-3 query variations
-- Run in parallel
-- Merge and deduplicate
+- **Exa**: `web_search_advanced_exa` — people search (Stage 2), company research
+- **Gmail**: `gmail_create_draft`, `gmail_search_messages`, `gmail_list_drafts`
+- **Slack**: `slack_send_message`, `slack_search_channels` — for asking clarifying questions
 
-## Categories
+### Apify CLI
 
-Use appropriate Exa `category` depending on what you need:
-- `people` → LinkedIn profiles, public bios (primary for discovery)
-- `personal site` → personal blogs, portfolio sites, about pages
-- `news` → press mentions, interviews, speaker bios
-- No category (`type: "auto"`) → general web results, broader context
+Apify actors are invoked via the `mcpc` CLI tool. See `.agents/skills/apify-ultimate-scraper/SKILL.md` for the full workflow pattern (fetch schema → run actor → parse results).
 
-Start with `category: "people"` for profile discovery, then use other categories or no category with `livecrawl: "fallback"` for deeper research on specific individuals.
+## Data Schemas
 
-### Category-Specific Filter Restrictions
+### jobs.csv (Stage 1 output)
 
-When using `category: "people"`, these parameters cause errors:
-- `startPublishedDate` / `endPublishedDate`
-- `startCrawlDate` / `endCrawlDate`
-- `includeText` / `excludeText`
-- `excludeDomains`
-- `includeDomains` — **LinkedIn domains only** (e.g., "linkedin.com")
-
-When searching without a category, all parameters are available (but `includeText`/`excludeText` still only support single-item arrays).
-
-## LinkedIn
-
-Public LinkedIn via Exa: `category: "people"`, no other filters.
-Auth-required LinkedIn → use Claude in Chrome browser fallback.
-
-## Browser Fallback
-
-Auto-fallback to Claude in Chrome when:
-- Exa returns insufficient results
-- Content is auth-gated
-- Dynamic pages need JavaScript
-
-## Examples
-
-### Discovery: find people by role
 ```
-web_search_advanced_exa {
-  "query": "VP Engineering AI infrastructure",
-  "category": "people",
-  "numResults": 20,
-  "type": "auto"
-}
+job_id,company_name,job_title,location,job_url,company_domain,source,date_found
 ```
 
-### With query variations
-```
-web_search_advanced_exa {
-  "query": "machine learning engineer San Francisco",
-  "category": "people",
-  "additionalQueries": ["ML engineer SF", "AI engineer Bay Area"],
-  "numResults": 25,
-  "type": "deep"
-}
-```
+- `job_id`: Auto-generated UUID
+- `source`: `linkedin` or `google_jobs`
+- `date_found`: ISO date when the job was scraped
+- Deduplication key: `job_url` (exact match)
 
-### Deep dive: research a specific person
+### contacts.csv (Stage 2 output)
+
 ```
-web_search_advanced_exa {
-  "query": "Dario Amodei Anthropic CEO background",
-  "type": "auto",
-  "livecrawl": "fallback",
-  "numResults": 15
-}
+job_id,company_name,job_title,job_url,contact_name,contact_title,department,contact_location,local_match,linkedin_url,company_phone,rank_reason
 ```
 
-### News mentions
+- `local_match`: `true` if contact location matches job location
+- `rank_reason`: Why this contact was selected (e.g., "HIM Director, local match")
+- `company_phone`: Facility phone number for cold calling
+
+### enriched_contacts.csv (Stage 3 output)
+
+All `contacts.csv` columns plus:
+
 ```
-web_search_advanced_exa {
-  "query": "Dario Amodei interview",
-  "category": "news",
-  "numResults": 10,
-  "startPublishedDate": "2024-01-01"
-}
+email,email_confidence,email_verified,verification_status
 ```
 
-## Output Format
+- `email_confidence`: Hunter.io score (0-100)
+- `email_verified`: `true`, `false`, or `unverified`
+- `verification_status`: `valid`, `invalid`, `accept_all`, `disposable`, `unknown`
 
-Return:
-1) Results (name, title, company, location if available)
-2) Sources (Profile URLs)
-3) Notes (profile completeness, verification status)
+## Target Roles
 
+### Stage 1 — Jobs to Scrape (HIMS + IT only)
 
-Step 3: Set up Hunter.io API
+Include:
+- Medical Records (clerks, technicians, coders, specialists)
+- Health Information Management (HIM/HIMS coordinators, analysts, associates)
+- Health IT / EHR (Epic analysts, EHR application analysts, clinical informatics)
+- Release of Information (ROI specialists, correspondence clerks)
 
-Hunter.io is used for email enrichment (finding hiring manager emails by name + company domain).
+Exclude:
+- HR, recruiting, talent acquisition roles
+- Administrative/nursing/clinical roles
+- Generic hospital clerks (admitting, unit, ward, registration)
+- Staffing agency postings
 
-1. Sign up at https://hunter.io and get your API key
-2. Add to `.gitignore/.env`:
-   ```
-   HUNTER_API_KEY=your_key_here
-   ```
-3. No MCP server needed — the pipeline calls Hunter.io via `curl`
+### Stage 2 — Contacts to Find (decision-makers)
 
-Step 4: Set up Gmail MCP Server
+Search for manager-level or above individuals. Priority order:
+1. HIM/Medical Records leadership
+2. HR/Talent Acquisition leadership
+3. Health IT/EHR leadership
+4. Operations leadership
 
-Gmail MCP enables saving drafted outreach emails directly to your Gmail drafts folder.
+Local proximity to job posting is the strongest ranking signal.
 
-1. Create a Google Cloud project and enable the Gmail API
-2. Create OAuth Desktop credentials (download the JSON)
-3. Run the auth flow:
-   ```bash
-   npx @shinzolabs/gmail-mcp auth
-   ```
-4. Add the MCP server:
-   ```bash
-   claude mcp add gmail -- npx @shinzolabs/gmail-mcp
-   ```
+## Outreach Principles
 
-Step 5: Ask User to Restart Claude Code
+- Frame as **staff augmentation** — never "outsourcing" or "taking over"
+- "We hire a dedicated person to learn your process end-to-end"
+- "No cost to the facility"
+- Subject lines: ASCII only, no Unicode, no em-dashes
+- Tone: peer-to-peer, not vendor-to-customer
+- Templates: `assets/templates/email_template.md` and `assets/templates/linkedin_message.md`
+- Writing frameworks: `.agents/skills/cold-email/` (PAS, BAB, etc.)
 
-You should ask the user to restart Claude Code to have the config changes take effect after any MCP changes.
+## Agent Behaviors
 
----
+### Token Isolation
 
-## Running the Job Prospector
+Never run Exa or Apify operations in the main context. Always spawn Task agents for API calls. Agents return compact JSON — no raw search results in the main thread.
 
-Use the `/job-prospector` skill to run the full pipeline. It will:
-1. Search for open jobs matching your criteria (via Exa)
-2. Identify hiring managers at each company (via Exa people search)
-3. Find their email addresses (via Hunter.io)
-4. Draft personalized outreach emails (saved to Gmail drafts)
+### Cost Consciousness
 
-Edit the outreach template at `hiring-manager-search/assets/email_template.md` to customize your messaging.
+Before any batch API operation, calculate and display the estimated credit cost:
+- Hunter.io: 1 credit per email-finder call, 1 credit per email-verifier call (25 + 100 free/month)
+- Apify: varies by actor — display estimated cost before running
+- Exa: 1 search credit per query (1000 free/month)
+
+Always confirm with the user before proceeding with operations that consume significant credits.
+
+### Error Handling
+
+- Partial failures: complete what is possible, report failures in summary
+- Missing API key: stop and instruct user to add it to `.env`
+- Gmail MCP unavailable: save drafts to `data/email_drafts.md` as fallback
+- Google Sheets unavailable: CSVs in `data/` are the fallback
+- Apify actor timeout: reduce batch size and retry
+
+### Communication
+
+- Use Slack to message the user when running autonomously and hitting a decision point
+- When a process completes, summarize: jobs found, contacts identified, emails enriched, drafts created
+- Surface data quality issues (stale postings, low-confidence emails, missing contacts)
+- Highlight the highest-quality opportunities to pursue first
+- When in doubt, ask rather than guess
+
+### Feedback Loop
+
+Use `/improve` to apply post-run feedback. Categories: Copy/Tone, Pipeline Logic, Search Quality, Tool/Integration, Data Schema, Architecture.
+
+## Project Structure
+
+```
+.
+├── CLAUDE.md                     # This file — primary agent instructions
+├── .env                          # API keys (gitignored)
+├── .gitignore
+├── skills-lock.json              # Imported skills manifest
+├── Tavrn GTM Agent PRD.pdf       # Product requirements
+├── .agents/skills/               # Imported skills (open ecosystem)
+├── .claude/skills/               # Invocable skills (slash commands)
+│   ├── prospect/                 # /prospect — full pipeline
+│   ├── scrape-jobs/              # /scrape-jobs — Stage 1
+│   ├── find-contacts/            # /find-contacts — Stage 2
+│   ├── enrich-emails/            # /enrich-emails — Stage 3
+│   ├── draft-outreach/           # /draft-outreach — Stage 4
+│   └── improve/                  # /improve — feedback loop
+├── assets/templates/             # Email + LinkedIn outreach templates
+└── data/                         # Runtime CSVs (gitignored)
+```
